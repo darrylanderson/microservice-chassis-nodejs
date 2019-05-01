@@ -9,10 +9,6 @@ service UserService {
     rpc RemoveUser (UserId) returns (Empty);
 }
 
-message GetUserRequest {
-    int64 user_id = 1;
-}
-
 message User {
     int32 user_id = 1;
     string email = 2;

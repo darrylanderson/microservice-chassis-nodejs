@@ -12,12 +12,18 @@
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.5.0",
+    "@opencensus/instrumentation-grpc": "^0.0.11",
+    "@opencensus/propagation-binaryformat": "^0.0.11",
+    "@opencensus/exporter-prometheus": "^0.0.11",
+    "@opencensus/exporter-zipkin": "^0.0.11",
+    "@opencensus/nodejs": "^0.0.11",
     "debug": "^3.1.0",
     "async": "^1.5.2",
     "google-protobuf": "^3.7.1",
     "grpc": "^1.20.2",
     "lodash": "^4.6.1",
-    "pino": "^5.12.3"
+    "pino": "^5.12.3",
+    "prom-client": "^11.3.0"
   },
   "devDependencies": {
     "@types/node": "^11.13.8",

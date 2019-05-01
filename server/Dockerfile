@@ -23,7 +23,7 @@ FROM node:${NODE_VERSION}-slim
 WORKDIR /home/node/
 
 COPY --from=dependencies /home/node/node_modules node_modules
-COPY . .
+COPY dist ./
 
 ENV PATH="$PATH:/home/node/node_modules/.bin"
 ENV NODE_ENV production
@@ -31,4 +31,4 @@ ENV PORT 3000
 
 EXPOSE 3000
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "index.js"]
