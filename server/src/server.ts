@@ -1,5 +1,5 @@
 import {Logger} from 'pino';
-import {Tracer} from "@opencensus/core"
+import {Tracer} from '@opencensus/core'
 import {IUserServiceServer, UserServiceService} from "./proto/users_grpc_pb";
 import {Empty, User, UserId, UserList} from "./proto/users_pb";
 import grpc = require('grpc');

@@ -4,9 +4,10 @@ import {Stats, Tracer} from "@opencensus/core"
 const grpc = require('grpc');
 const tracing = require('@opencensus/nodejs');
 const {registerAllGrpcViews} = require('@opencensus/instrumentation-grpc');
-const {globalStats, Stats} = require('@opencensus/core');
+const {globalStats} = require('@opencensus/core');
 const {plugin} = require('@opencensus/instrumentation-grpc');
 const {PrometheusStatsExporter} = require('@opencensus/exporter-prometheus');
+const promClient = require('prom-client');
 const {ZipkinTraceExporter} = require('@opencensus/exporter-zipkin');
 
 function setupPrometheusStats(): Stats {
@@ -15,10 +16,19 @@ function setupPrometheusStats(): Stats {
         // Metrics will be exported on http://localhost:{port}/metrics
         port: 9464,
         startServer: true,
+        prefix: 'mcn'
     });
 
     // Starts Prometheus exporter
     globalStats.registerExporter(promExporter);
+
+    // Register some default metrics (ideally these would be part of opencensus)
+    const collectDefaultMetrics = promClient.collectDefaultMetrics;
+    const register = promExporter.registry;
+    collectDefaultMetrics({
+        prefix: 'mcn_',
+        register: register
+    });
 
     return globalStats;
 }
