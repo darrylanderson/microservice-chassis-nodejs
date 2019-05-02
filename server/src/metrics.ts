@@ -1,22 +1,22 @@
+import {Stats, Tracer} from "@opencensus/core";
 import * as path from "path";
-import {Stats, Tracer} from "@opencensus/core"
 
-const grpc = require('grpc');
-const tracing = require('@opencensus/nodejs');
-const {registerAllGrpcViews} = require('@opencensus/instrumentation-grpc');
-const {globalStats} = require('@opencensus/core');
-const {plugin} = require('@opencensus/instrumentation-grpc');
-const {PrometheusStatsExporter} = require('@opencensus/exporter-prometheus');
-const promClient = require('prom-client');
-const {ZipkinTraceExporter} = require('@opencensus/exporter-zipkin');
+const grpc = require("grpc");
+const tracing = require("@opencensus/nodejs");
+const {registerAllGrpcViews} = require("@opencensus/instrumentation-grpc");
+const {globalStats} = require("@opencensus/core");
+const {plugin} = require("@opencensus/instrumentation-grpc");
+const {PrometheusStatsExporter} = require("@opencensus/exporter-prometheus");
+const promClient = require("prom-client");
+const {ZipkinTraceExporter} = require("@opencensus/exporter-zipkin");
 
 function setupPrometheusStats(): Stats {
     // Enable OpenCensus exporters to export metrics to Prometheus
     const promExporter = new PrometheusStatsExporter({
         // Metrics will be exported on http://localhost:{port}/metrics
         port: 9464,
+        prefix: "mcn",
         startServer: true,
-        prefix: 'mcn'
     });
 
     // Starts Prometheus exporter
@@ -26,8 +26,8 @@ function setupPrometheusStats(): Stats {
     const collectDefaultMetrics = promClient.collectDefaultMetrics;
     const register = promExporter.registry;
     collectDefaultMetrics({
-        prefix: 'mcn_',
-        register: register
+        prefix: "mcn_",
+        register,
     });
 
     return globalStats;
@@ -36,8 +36,8 @@ function setupPrometheusStats(): Stats {
 function setupZipkinTracing(): Tracer {
     // Enable Zipkin tracing
     const zipkinOptions = {
-        url: 'http://localhost:9411/api/v2/spans',
-        serviceName: 'microservice-chassis-nodejs'
+        serviceName: "microservice-chassis-nodejs",
+        url: "http://localhost:9411/api/v2/spans",
     };
 
     const zipkinExporter = new ZipkinTraceExporter(zipkinOptions);
@@ -56,8 +56,8 @@ export function setupTracerAndExporters() {
     const tracer = setupZipkinTracing();
 
     // Enable grpc stats and tracing
-    const basedir = path.dirname(require.resolve('grpc'));
-    const version = require(path.join(basedir, 'package.json')).version;
+    const basedir = path.dirname(require.resolve("grpc"));
+    const version = require(path.join(basedir, "package.json")).version;
     plugin.enable(grpc, tracer, version, /** plugin options */{}, basedir, stats);
     registerAllGrpcViews(stats);
 

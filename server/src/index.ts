@@ -1,15 +1,15 @@
-import * as pino from 'pino';
-// grpc server
-import {createGrpcServer} from './server';
+import * as pino from "pino";
 // tracing
-import {setupTracerAndExporters} from './metrics';
+import {setupTracerAndExporters} from "./metrics";
+// grpc server
+import {createGrpcServer} from "./server";
 
 // Listening IP
 const port = "127.0.0.1:5000";
 
 // Set up logger
 const logger = pino({
-    name: 'microservice-chassis-nodejs'
+    name: "microservice-chassis-nodejs",
 });
 
 // Start tracing

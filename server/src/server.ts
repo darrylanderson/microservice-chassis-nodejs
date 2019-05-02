@@ -1,11 +1,13 @@
-import {Logger} from 'pino';
-import {Tracer} from '@opencensus/core'
+import {Tracer} from "@opencensus/core";
+import {Logger} from "pino";
 import {IUserServiceServer, UserServiceService} from "./proto/users_grpc_pb";
 import {Empty, User, UserId, UserList} from "./proto/users_pb";
-import grpc = require('grpc');
-
+import grpc = require("grpc");
 
 class ServerImpl implements IUserServiceServer {
+    public insertUser: grpc.handleUnaryCall<User, Empty>;
+    public listUsers: grpc.handleUnaryCall<Empty, UserList>;
+    public removeUser: grpc.handleUnaryCall<UserId, Empty>;
     private tracer: Tracer;
     private logger: Logger;
 
@@ -15,30 +17,25 @@ class ServerImpl implements IUserServiceServer {
         this.logger = logger;
     }
 
-    getUser(call: grpc.ServerUnaryCall<UserId>,
-            callback: grpc.sendUnaryData<User>) {
-        const span = this.tracer.startChildSpan('microservice-chassis-nodejs.ServerImpl.getUser');
+    public getUser(call: grpc.ServerUnaryCall<UserId>,
+                   callback: grpc.sendUnaryData<User>) {
+        const span = this.tracer.startChildSpan("microservice-chassis-nodejs.ServerImpl.getUser");
 
         const user = new User();
 
-        this.logger.info('Calculate', call.request.toObject());
+        this.logger.info("Calculate", call.request.toObject());
 
         user.setUserId(1);
-        user.setName('Test User');
-        user.setEmail('testuser@test.com');
+        user.setName("Test User");
+        user.setEmail("testuser@test.com");
 
-        this.logger.info('[getUser] Done: ${JSON.stringify(user.toObject())}');
+        this.logger.info("[getUser] Done: ${JSON.stringify(user.toObject())}");
 
         span.end();
 
         callback(null, user);
-    };
-
-    insertUser: grpc.handleUnaryCall<User, Empty>;
-    listUsers: grpc.handleUnaryCall<Empty, UserList>;
-    removeUser: grpc.handleUnaryCall<UserId, Empty>;
+    }
 }
-
 
 export function createGrpcServer(port: string,
                                  tracer: Tracer,
